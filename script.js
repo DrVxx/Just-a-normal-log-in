@@ -1,51 +1,37 @@
-const form = document.getElementById("loginForm");
-const btn = document.getElementById("submitBtn");
-const errorBox = document.getElementById("errorBox");
-const loader = document.getElementById("loader");
-const card = document.querySelector(".card");
-
-let attempts = 0;
-
 const funnyErrors = [
-  "Access denied. Our servers rated that password a generous 2/10.",
-  "Nope. That password was last seen on a sticky note under a keyboard.",
-  "Authentication failed: your caps lock confidence is inspiring.",
-  "Denied. Security says your password is allergic to success.",
-  "Error 418: I’m a teapot. Also, your password isn’t it.",
-  "Login blocked. That combo is on our Wall of ‘Nice Try’.",
-  "Rejected due to extreme familiarity. Try something less guessable.",
-  "Hmm… our AI thinks your password is actually a grocery list."
+    "This password was used by a medieval peasant on RuneScape.",
+    "Error 404: Brain not found.",
+    "This password is weaker than instant noodles.",
+    "NASA just called, they want their launch code back.",
+    "This password has been spotted on MySpace in 2006.",
+    "Your cat could guess this faster.",
+    "Congratulations, you found the worst password of 2025!"
 ];
 
-function randomError() {
-  attempts++;
-  // Every 3rd try, show a “serious” message for variety
-  if (attempts % 3 === 0) {
-    return "Too many attempts. Please wait… just kidding, keep trying. 😉";
-  }
-  const i = Math.floor(Math.random() * funnyErrors.length);
-  return funnyErrors[i];
+// Variabel til at huske sidste fejl
+let lastError = "";
+
+// Funktion der vælger en tilfældig fejl (men ikke samme som sidst)
+function getRandomError() {
+    let newError;
+    do {
+        const randomIndex = Math.floor(Math.random() * funnyErrors.length);
+        newError = funnyErrors[randomIndex];
+    } while (newError === lastError); // Gentag hvis det er samme fejl
+
+    lastError = newError; // Gem som sidste fejl
+    return newError;
 }
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
+// Når brugeren prøver at logge ind
+document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // Stopper siden fra at reloade
 
-  // Pretend to verify…
-  btn.disabled = true;
-  errorBox.textContent = "";
-  loader.hidden = false;
+    // Vælg en tilfældig fejl
+    const errorMessage = getRandomError();
 
-  setTimeout(() => {
-    loader.hidden = true;
-    errorBox.textContent = randomError();
-    btn.disabled = false;
-
-    // Add a little shake on failure
-    card.classList.add("shake");
-    setTimeout(() => card.classList.remove("shake"), 500);
-
-    // Optional: clear password so it feels “secure”
-    document.getElementById("password").value = "";
-  }, 900);
+    // Vis fejl
+    document.getElementById("errorBox").innerText = errorMessage;
 });
+
 
